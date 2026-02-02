@@ -14,14 +14,14 @@ export interface Question {
 export const questions: Question[] = [
   {
     id: "q1",
-    section: "Votre bien",
+    section: "Votre projet",
     question: "De quel type de bien s'agit-il ?",
     type: "single",
     options: ["Une maison", "Un appartement", "Un immeuble", "Autre"],
   },
   {
     id: "q2",
-    section: "Votre bien",
+    section: "Votre projet",
     question: "Dans quel contexte s'inscrit votre réflexion ?",
     type: "single",
     options: [
@@ -34,7 +34,7 @@ export const questions: Question[] = [
   },
   {
     id: "q3",
-    section: "Votre bien",
+    section: "Votre projet",
     question:
       "Quelle est/sera votre statut vis à vis de ce logement, au sens de la fiscalité ?",
     type: "single",
@@ -49,7 +49,7 @@ export const questions: Question[] = [
   },
   {
     id: "q4",
-    section: "Votre bien",
+    section: "Votre projet",
     question:
       "Pour environ combien d'années vous projetez-vous dans votre logement ?",
     type: "single",
@@ -63,7 +63,7 @@ export const questions: Question[] = [
   },
   {
     id: "q5",
-    section: "Votre bien",
+    section: "Votre projet",
     question:
       "Quelles sont vos motivations pour la réalisation de travaux de rénovation énergétique ?",
     type: "multiple",
@@ -77,7 +77,7 @@ export const questions: Question[] = [
   },
   {
     id: "q6",
-    section: "Votre bien",
+    section: "Votre projet",
     question:
       "Avez-vous remarqué des problèmes d'humidité ou de structure dans le logement ?",
     type: "multiple",
@@ -89,12 +89,63 @@ export const questions: Question[] = [
   },
   {
     id: "q7",
-    section: "Votre bien",
+    section: "Votre projet",
     question:
       "Avez-vous une question ou un objectif précis dont vous souhaitez nous faire part ?",
     type: "text",
     options: [],
     placeholder: "Décrivez votre question ou objectif ici..."
+  },
+  {
+    id: "q8",
+    section: "Votre projet",
+    question:
+      "Avez-vous un Diagnostic de Performance Energétique (DPE) et quelle est son étiquette ?",
+    type: "single",
+    options: [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "Je n'ai pas de DPE",
+      "Je ne me souviens plus de la note",
+    ],
+  },
+  {
+    id: "q9",
+    section: "Votre projet",
+    question:
+      "Si vous estimez que votre DPE est fiable (réalisé après 2021, sans rénovation depuis et avec des équipements correctement renseignés), vous pouvez indiquez son numéro pour obtenir vos résultats plus rapidement",
+    type: "text",
+    options: [],
+    placeholder: "Numéro du DPE",
+  },
+  {
+    id: "q10",
+    section: "Votre bien",
+    question:
+      "Selon vous, vers quelle période a été construit l'immeuble ? Cette information permet d’estimer les caractéristiques et la performance du bâti : - Avant 1948 : immeubles anciens avec des matériaux laissant transiter la vapeur d’eau - A partir de 1974 : apparition de la première réglementation thermique",
+    type: "single",
+    options: [
+      "Problèmes d'humidité",
+      "Problèmes de structure",
+      "Aucun problème",
+    ],
+  },
+  {
+    id: "q8",
+    section: "Votre projet",
+    question:
+      "Avez-vous un Diagnostic de Performance Energétique (DPE) et quelle est son étiquette ?",
+    type: "single",
+    options: [
+      "Problèmes d'humidité",
+      "Problèmes de structure",
+      "Aucun problème",
+    ],
   },
 ]
 
