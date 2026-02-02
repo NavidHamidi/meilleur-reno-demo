@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
@@ -10,12 +10,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, TrendingUp, AlertCircle, Lightbulb } from "lucide-react";
+import { CheckCircle, TrendingUp, Lightbulb } from "lucide-react";
 import { questions } from "@/lib/questions";
 import { SurveyResponse } from "@/lib/types/db";
 import { getResponsesBySessionId } from "@/lib/supabase/surveyResponse";
 
-export default function ResultsPage() {
+export default function ResultPageWrapper() {
+  return (
+    <Suspense>
+      <ResultsPage />
+    </Suspense>
+  );
+}
+
+function ResultsPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session");
   const [loading, setLoading] = useState(true);
@@ -23,13 +31,15 @@ export default function ResultsPage() {
 
   useEffect(() => {
     if (sessionId) {
-      getResponsesBySessionId(sessionId as string).then((response) => {
-        if (response.ok && response.data) {
-          setResponses(response.data);
-        }
-      }).finally(() => {
-        setLoading(false);
-      });
+      getResponsesBySessionId(sessionId as string)
+        .then((response) => {
+          if (response.ok && response.data) {
+            setResponses(response.data);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [sessionId]);
 
@@ -40,8 +50,7 @@ export default function ResultsPage() {
     return [
       {
         title: "Travaux de rénovation des façades recommandés",
-        description:
-          "Justiofication",
+        description: "Justiofication",
         impact: "high",
         icon: TrendingUp,
       },
@@ -54,8 +63,7 @@ export default function ResultsPage() {
       },
       {
         title: "Eligibilité aux subventions gouvernementales",
-        description:
-          "Ma ¨Prime Renov'",
+        description: "Ma ¨Prime Renov'",
         impact: "medium",
         icon: TrendingUp,
       },
