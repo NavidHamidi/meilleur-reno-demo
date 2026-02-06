@@ -76,7 +76,7 @@ export default function Home() {
 
         {/* Footer info */}
         <p className="text-center text-sm text-muted-foreground">
-          🔒 Vos données sont sécurisées et confidentielles
+          Vos données sont sécurisées et confidentielles
         </p>
       </div>
     </main>

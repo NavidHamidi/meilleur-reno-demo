@@ -21,7 +21,12 @@ import {
   getEstimatedTime,
   getTotalQuestions,
 } from "@/lib/questions";
-import { createSession, updateSession } from "@/lib/supabase/surveySession";
+import {
+  createSession,
+  getSessionById,
+  updateSession,
+} from "@/lib/supabase/surveySession";
+import { getResponsesBySessionId } from "@/lib/supabase/surveyResponse";
 import { createorUpdateResponse } from "@/lib/supabase/surveyResponse";
 
 export default function SurveyFlow() {
@@ -29,14 +34,132 @@ export default function SurveyFlow() {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [otherValues, setOtherValues] = useState<Record<string, string>>({});
   const [sessionId, setSessionId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [showRestoredMessage, setShowRestoredMessage] = useState(false);
   const [direction, setDirection] = useState(0);
   const textTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  
+  const initializeSession = async () => {
+    try {
+      // Vérifier s'il y a une session en cours dans localStorage
+      const savedSession = localStorage.getItem("questionnaire_session");
+
+      if (savedSession) {
+        const sessionData = JSON.parse(savedSession);
+        console.log("Session found in localStorage:", sessionData);
+
+        // Vérifier que la session existe toujours dans Supabase
+        const sessionRes = await getSessionById(sessionData.sessionId);
+        if (!sessionRes.ok || !sessionRes.data) {
+          localStorage.removeItem("questionnaire_session");
+          return;
+        }
+
+        // Session valide - restaurer l'état
+        console.log("Restoring session from localStorage");
+        setSessionId(sessionData.sessionId);
+        setCurrentStep(sessionData.currentStep);
+
+        // Charger les réponses existantes
+        await loadExistingAnswers(sessionData.sessionId);
+
+        // Afficher message de restauration
+        setShowRestoredMessage(true);
+        setTimeout(() => setShowRestoredMessage(false), 4000);
+
+        setIsLoading(false);
+        return;
+      }
+
+      // Pas de session valide - en créer une nouvelle
+      console.log("Creating new session");
+      const createRes = await createSession();
+      if (createRes.ok && createRes.data) {
+        const data = createRes.data[0];
+        setSessionId(data.id);
+        setCurrentStep(0);
+        setAnswers({});
+        setOtherValues({});
+        saveToLocalStorage();
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error initializing session:", error);
+      // En cas d'erreur, créer une nouvelle session
+      await createSession();
+    }
+  };
+
+  const loadExistingAnswers = async (sessionId: string) => {
+    try {
+      const sessionRes = await getResponsesBySessionId(sessionId);
+
+      if (!sessionRes.ok || !sessionRes.data) {
+        console.error("Session not found or error retrieving session");
+        return;
+      }
+
+      const loadedAnswers: Record<string, string | string[]> = {};
+      const loadedOtherValues: Record<string, string> = {};
+
+      sessionRes.data.forEach((response) => {
+        const answer = response.answer;
+
+        // Extraire les valeurs "Autre" si présentes
+        if (typeof answer === "string" && answer.startsWith("Autre: ")) {
+          const otherValue = answer.replace("Autre: ", "");
+          loadedAnswers[response.question_id] = "Autre";
+          loadedOtherValues[response.question_id] = otherValue;
+        } else if (Array.isArray(answer)) {
+          const processedAnswer = answer.map((item) => {
+            if (typeof item === "string" && item.startsWith("Autre: ")) {
+              const otherValue = item.replace("Autre: ", "");
+              loadedOtherValues[response.question_id] = otherValue;
+              return "Autre";
+            }
+            return item;
+          });
+          loadedAnswers[response.question_id] = processedAnswer;
+        } else {
+          loadedAnswers[response.question_id] = answer;
+        }
+      });
+
+      console.log("Loaded answers:", loadedAnswers);
+      setAnswers(loadedAnswers);
+      setOtherValues(loadedOtherValues);
+    } catch (error) {
+      console.error("Error loading answers:", error);
+    }
+  };
+
+  const saveToLocalStorage = () => {
+    if (!sessionId) return;
+
+    const sessionData = {
+      sessionId,
+      currentStep,
+      timestamp: new Date().toISOString(),
+    };
+
+    localStorage.setItem("questionnaire_session", JSON.stringify(sessionData));
+    console.log("Session saved to localStorage:", sessionData);
+  };
+
+  const clearLocalStorage = () => {
+    localStorage.removeItem("questionnaire_session");
+    console.log("Session cleared from localStorage");
+  };
+
+  const saveProgress = async () => {
+    if (!sessionId) return;
+    await updateSession(sessionId, { current_step: currentStep });
+  };
+
   const saveAnswer = async (questionId: string, answer: string | string[]) => {
     if (!sessionId) return;
 
-    console.log("💾 Saving answer:", { questionId, answer, sessionId });
+    console.log("Saving answer:", { questionId, answer, sessionId });
     const res = await createorUpdateResponse({
       session_id: sessionId,
       question_id: questionId,
@@ -44,27 +167,19 @@ export default function SurveyFlow() {
     });
 
     if (!res.ok) {
-      console.error("❌ Error saving answer:", res.message);
+      console.error("Error saving answer:", res.message);
     } else {
-      console.log("✅ Answer saved successfully:", res.data);
+      console.log("Answer saved successfully:", res.data);
     }
   };
 
   useEffect(() => {
-    // Créer une session au démarrage
-    createSession().then((response) => {
-      if (response.ok && response.data.length > 0) {
-        setSessionId(response.data[0].id);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     // Sauvegarder automatiquement la progression
-    if (sessionId) {
-      updateSession(sessionId, { current_step: currentStep });
+    if (sessionId && !isLoading) {
+      saveProgress();
+      saveToLocalStorage();
     }
-  }, [currentStep, answers, sessionId]);
+  }, [currentStep, sessionId, isLoading]);
 
   const currentQuestion = questions[currentStep];
   const progress = ((currentStep + 1) / getTotalQuestions()) * 100;
@@ -137,6 +252,7 @@ export default function SurveyFlow() {
       completed: true,
       completed_at: new Date().toISOString(),
     });
+    clearLocalStorage();
     window.location.href = `/survey/result?session=${sessionId}`;
   };
 
@@ -171,17 +287,57 @@ export default function SurveyFlow() {
     }),
   };
 
-  const hasOtherSelected = (questionId: string) => {
-    const answer = answers[questionId];
-    if (Array.isArray(answer)) {
-      return answer.includes("Autre");
-    }
-    return answer === "Autre";
-  };
+  if (isLoading) {
+    initializeSession();
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">
+            Chargement du questionnaire...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-3xl">
+        {/* Message de restauration */}
+        {showRestoredMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mb-4 p-4 bg-primary/10 border-2 border-primary/20 rounded-lg flex items-center gap-3"
+          >
+            <div className="flex-shrink-0">
+              <svg
+                className="w-5 h-5 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground">
+                Session restaurée
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Vos réponses ont été chargées. Vous pouvez continuer où vous vous êtes arrêté.
+              </p>
+            </div>
+          </motion.div>
+        )}
+
         {/* Header avec progression */}
         <div className="mb-8 space-y-4">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -399,7 +555,7 @@ export default function SurveyFlow() {
 
         {/* Indicateur de sauvegarde */}
         <p className="text-xs text-center text-muted-foreground mt-4">
-          ✓ Progression sauvegardée automatiquement
+          Progression sauvegardée automatiquement
         </p>
       </div>
     </div>

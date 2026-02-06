@@ -5,6 +5,37 @@ import { supabase } from "./supabase";
 
 const TABLE_NAME = "mr_survey_sessions";
 
+export const getSessionById = async (sessionId: string): Promise<APIResponse<SurveySession | null>> => {
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select("*")
+      .eq("id", sessionId)
+      .single();
+
+    if (error) {
+      return {
+        ok: false,
+        data: null,
+        message: error.message,
+      };
+    }
+
+    return {
+      ok: true,
+      data: data || null,
+      message: "Session retrieved successfully",
+    };
+  } catch (error: any) {
+    console.error("Error retrieving session by ID:", error.message);
+    return {
+      ok: false,
+      data: null,
+      message: error.message,
+    };
+  }
+};
+
 export const createSession = async (): Promise<
   APIResponse<SurveySession[]>
 > => {
