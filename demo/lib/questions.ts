@@ -123,30 +123,6 @@ export const questions: Question[] = [
     options: [],
     placeholder: "Numéro du DPE",
   },
-  {
-    id: "q10",
-    section: "Votre bien",
-    question:
-      "Selon vous, vers quelle période a été construit l'immeuble ? Cette information permet d’estimer les caractéristiques et la performance du bâti : - Avant 1948 : immeubles anciens avec des matériaux laissant transiter la vapeur d’eau - A partir de 1974 : apparition de la première réglementation thermique",
-    type: "single",
-    options: [
-      "Problèmes d'humidité",
-      "Problèmes de structure",
-      "Aucun problème",
-    ],
-  },
-  {
-    id: "q8",
-    section: "Votre projet",
-    question:
-      "Avez-vous un Diagnostic de Performance Energétique (DPE) et quelle est son étiquette ?",
-    type: "single",
-    options: [
-      "Problèmes d'humidité",
-      "Problèmes de structure",
-      "Aucun problème",
-    ],
-  },
 ]
 
 export const sections = Array.from(new Set(questions.map(q => q.section)))
