@@ -12,7 +12,7 @@ export const getResponsesBySessionId = async (
     const { data, error } = await supabase
       .from(TABLE_NAME)
       .select("*")
-      .eq("session_id", sessionId);
+      .eq("session_id", sessionId).order("updated_at", { ascending: true });
 
     if (error) {
       return {
