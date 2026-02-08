@@ -28,6 +28,8 @@ import {
 } from "@/lib/supabase/surveySession";
 import { getResponsesBySessionId } from "@/lib/supabase/surveyResponse";
 import { createorUpdateResponse } from "@/lib/supabase/surveyResponse";
+import { linkSessionToUser, getSession } from "@/lib/supabase/auth";
+import AuthGate from "@/components/features/auth/AuthGate";
 
 export default function SurveyFlow() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -38,6 +40,7 @@ export default function SurveyFlow() {
   const [showRestoredMessage, setShowRestoredMessage] = useState(false);
   const [direction, setDirection] = useState(0);
   const textTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showAuthGate, setShowAuthGate] = useState(false);
 
   const initializeSession = async () => {
     try {
@@ -235,7 +238,15 @@ export default function SurveyFlow() {
       setDirection(1);
       setCurrentStep(currentStep + 1);
     } else {
-      complete_survey();
+      getSession().then((res) => {
+        if (res.success && res.session) {
+          console.log("User is authenticated, completing survey");
+          completeSurvey(res.session.user.id);
+        } else {
+          console.log("User not authenticated, showing auth gate");
+          setShowAuthGate(true);
+        }
+      });
     }
   };
 
@@ -246,13 +257,22 @@ export default function SurveyFlow() {
     }
   };
 
-  const complete_survey = async () => {
-    if (!sessionId) return;
-    updateSession(sessionId, {
-      completed: true,
-      completed_at: new Date().toISOString(),
-    });
+  const handleAuthSuccess = (userId: string) => {
+    console.log("Auth successful, completing survey for user:", userId);
+    completeSurvey(userId);
+  };
+
+  const completeSurvey = async (userId: string) => {
+    // 1. Lier la session à l'utilisateur
+    await linkSessionToUser(sessionId, userId);
+
+    // 2. Marquer comme complétée
+    await updateSession(sessionId, { completed: true });
+
+    // 3. Nettoyer localStorage
     clearLocalStorage();
+
+    // 4. Rediriger vers résultats
     window.location.href = `/survey/result?session=${sessionId}`;
   };
 
@@ -301,6 +321,10 @@ export default function SurveyFlow() {
     );
   }
 
+  if (showAuthGate) {
+    return <AuthGate onSuccess={handleAuthSuccess} sessionId={sessionId} />;
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-3xl">
@@ -332,7 +356,8 @@ export default function SurveyFlow() {
                 Session restaurée
               </p>
               <p className="text-xs text-muted-foreground">
-                Vos réponses ont été chargées. Vous pouvez continuer où vous vous êtes arrêté.
+                Vos réponses ont été chargées. Vous pouvez continuer où vous
+                vous êtes arrêté.
               </p>
             </div>
           </motion.div>
