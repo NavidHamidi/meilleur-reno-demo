@@ -20,7 +20,7 @@ export default function Page() {
             href="/"
             className="text-2xl font-bold text-primary tracking-tight"
           >
-            MeilleurReno
+            MeilleureReno
           </Link>
           <div className="space-x-4">
             <Link href="/survey">
