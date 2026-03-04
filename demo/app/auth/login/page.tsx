@@ -1,4 +1,6 @@
-import AuthGate from "@/components/auth/AuthGate";
+'use client'
+
+import LoginForm from "@/components/auth/LoginForm";
 
 const onSuccess = () => {
     // Rediriger vers la page d'accueil ou une autre page après la connexion réussie
@@ -6,5 +8,5 @@ const onSuccess = () => {
 }
 
 export default function LoginPage() {
-    return <AuthGate onSuccess={onSuccess} sessionId="" />;
+    return <LoginForm onSuccess={onSuccess} />;
 }
