@@ -1,42 +1,19 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { CheckCircle, Home, Paintbrush, Users, Star } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, Home, Paintbrush, Users } from "lucide-react";
 import Image from "next/image";
+import Footer from "@/components/ui/footer";
+import StatBar from "@/components/landing/StatBar";
+import { testimonial1 } from "@/lib/testimonials";
+import TestimonialSection from "@/components/landing/Testimonial";
+import ProjectProcess from "@/components/landing/ProjectProcess";
+import FooterCTA from "@/components/landing/FooterCTA";
+import { projectProcess1 } from "@/lib/projectProcess";
 
 export default function Page() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border animate-in slide-in-from-top duration-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link
-            href="/"
-            className="text-2xl font-bold text-primary tracking-tight"
-          >
-            MeilleureReno
-          </Link>
-          <div className="space-x-4">
-            <Link href="/survey">
-              <Button size="lg" className="rounded-full">
-                Devis gratuit sous 24h
-              </Button>
-            </Link>
-            <Link href="">
-              <Button size="lg" className="rounded-full">
-                Espace client
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Background gradient effect */}
@@ -103,29 +80,7 @@ export default function Page() {
 
       {/* Stats Section */}
       <section className="py-12 bg-foreground text-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            {[
-              { number: "500+", label: "Chantiers réalisés" },
-              { number: "95%", label: "Satisfaction client" },
-              { number: "24h", label: "Délai de réponse" },
-              { number: "10+", label: "Années d'expérience" },
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className="animate-in fade-in slide-in-from-bottom duration-500"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="text-4xl sm:text-5xl font-bold text-primary mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-sm sm:text-base opacity-90">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <StatBar />
       </section>
 
       {/* Services Section */}
@@ -189,10 +144,10 @@ export default function Page() {
             ))}
           </div>
         </div>
-      {/*</section>
+        {/*</section>
 
       {/* Travaux d'embellissement Section 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">*/} 
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">*/}
         <div className="max-w-7xl mx-auto mt-5">
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -277,298 +232,21 @@ export default function Page() {
 
       {/* Process Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-              Comment ça marche ?
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Un processus simple et transparent du début à la fin
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            {[
-              {
-                number: "1",
-                title: "Audit gratuit",
-                description:
-                  "Remplissez notre questionnaire en ligne et recevez une première estimation de votre projet sous 24h",
-              },
-              {
-                number: "2",
-                title: "Devis détaillés",
-                description:
-                  "Nos artisans partenaires vous proposent des devis détaillés et transparents adaptés à vos besoins",
-              },
-              {
-                number: "3",
-                title: "Suivi de chantier",
-                description:
-                  "Nous vous accompagnons jusqu'à la fin de votre chantier pour garantir votre satisfaction totale",
-              },
-            ].map((step, index) => (
-              <div
-                key={index}
-                className="text-center animate-in fade-in slide-in-from-bottom duration-500"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6 shadow-lg">
-                  {step.number}
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{step.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ProjectProcess steps={projectProcess1} />
       </section>
 
       {/* Testimonials Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-              Ils nous ont fait confiance
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Découvrez les témoignages de nos clients satisfaits
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {[
-              {
-                quote:
-                  "Excellent service du début à la fin. L'équipe MeilleurReno a su nous guider dans nos choix et les artisans étaient vraiment professionnels. Notre appartement haussmannien a été magnifiquement rénové.",
-                author: "Justine S.",
-                project: "Rénovation complète - Paris 16e",
-                initials: "JS",
-                image: "/living-room.jpg",
-              },
-              {
-                quote:
-                  "Je recommande vivement ! Le suivi était impeccable et les devis très transparents. Trouver rapidement un professionnel adapté au besoin est alors très simple et sécurisé grâce à leur accompagnement.",
-                author: "Marc C.",
-                project: "Isolation thermique - Paris 7e",
-                initials: "MC",
-                image: "/living-room.jpg",
-              },
-              {
-                quote:
-                  "Service satisfaisant ! Notre rénovation a été menée avec professionnalisme et rigueur.",
-                author: "Jean D..",
-                project: "Isolation thermique - Paris 7e",
-                initials: "JD",
-                image: "/living-room.jpg",
-              },
-            ].map((testimonial, index) => (
-              <div
-                key={index}
-                className="relative rounded-2xl overflow-hidden group animate-in fade-in slide-in-from-bottom duration-500"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Background Image */}
-                <div className="absolute inset-0">
-                  <Image
-                    src={testimonial.image}
-                    alt={testimonial.project}
-                    width={800}
-                    height={800}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/95 via-foreground/80 to-foreground/40" />
-                </div>
-
-                {/* Content Overlay */}
-                <Card className="relative bg-transparent border-0 text-background shadow-none">
-                  <CardHeader className="relative z-10">
-                    <div className="flex gap-1 text-primary mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-current" />
-                      ))}
-                    </div>
-                    <CardDescription className="text-base italic leading-relaxed text-white">
-                      &ldquo;{testimonial.quote}&rdquo;
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="relative z-10">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                        {testimonial.initials}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-white">
-                          {testimonial.author}
-                        </div>
-                        <div className="text-sm text-white/80">
-                          {testimonial.project}
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
-        </div>
+        <TestimonialSection testimonial={testimonial1} />
       </section>
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-foreground text-background">
-        <div className="max-w-3xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Prêt à démarrer votre projet ?
-          </h2>
-          <p className="text-xl opacity-90">
-            Recevez vos devis travaux gratuits sous 24h et donnez vie à vos
-            projets de rénovation
-          </p>
-          <Link href="/survey">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
-            >
-              Obtenir mes devis gratuits
-            </Button>
-          </Link>
-        </div>
+        <FooterCTA/>
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="text-2xl font-bold text-primary mb-4">
-                MeilleurReno
-              </div>
-              <p className="text-sm opacity-80 leading-relaxed">
-                Le partenaire de confiance pour tous vos projets de rénovation
-                d&apos;intérieur à Paris. Accompagnement personnalisé, artisans
-                qualifiés, devis transparents.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Services</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Rénovation appartement
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Isolation thermique
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Décoration intérieur
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Architecture
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Zones</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Paris 7e
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Paris 15e
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Paris 16e
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Île-de-France
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Entreprise</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    À propos
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Nos artisans
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="opacity-80 hover:opacity-100 hover:text-primary transition-all"
-                  >
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="pt-8 border-t border-white/10 text-center text-sm opacity-70">
-            © 2026 MeilleurReno. Tous droits réservés.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
