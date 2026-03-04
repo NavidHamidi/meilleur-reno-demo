@@ -24,9 +24,10 @@ import { signUp, signIn, signInWithGoogle, resetPassword } from "@/lib/supabase/
 
 interface AuthGateProps {
   onSuccess: (userId: string) => void;
+  sessionId?: string;
 }
 
-export default function LoginForm({ onSuccess }: AuthGateProps) {
+export default function LoginForm({ onSuccess, sessionId }: AuthGateProps) {
   const [mode, setMode] = useState<"signup" | "signin" | "forgot-password">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

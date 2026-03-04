@@ -164,7 +164,7 @@ export async function getSession() {
 }
 
 /**
- * Réinitialiser le mot de passe
+ * Réinitialiser le mot de passe (envoyer email)
  */
 export async function resetPassword(email: string) {
   try {
@@ -181,6 +181,28 @@ export async function resetPassword(email: string) {
     return { success: true }
   } catch (error: any) {
     console.error('Reset password exception:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+/**
+ * Mettre à jour le mot de passe avec un nouveau mot de passe
+ */
+export async function updatePassword(newPassword: string) {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+
+    if (error) {
+      console.error('Update password error:', error)
+      return { success: false, error: error.message }
+    }
+
+    console.log('Password updated successfully')
+    return { success: true }
+  } catch (error: any) {
+    console.error('Update password exception:', error)
     return { success: false, error: error.message }
   }
 }

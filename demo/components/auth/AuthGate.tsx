@@ -7,9 +7,10 @@ import LoginForm from "./LoginForm";
 
 interface AuthGateProps {
   onSuccess: (userId: string) => void;
+  sessionId?: string;
 }
 
-export default function AuthGate({ onSuccess }: AuthGateProps) {
+export default function AuthGate({ onSuccess, sessionId }: AuthGateProps) {
   const benefits = [
     "Accédez à vos résultats détaillés",
     "Recommandations personnalisées",
@@ -72,7 +73,7 @@ export default function AuthGate({ onSuccess }: AuthGateProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <LoginForm onSuccess={onSuccess} />
+          <LoginForm onSuccess={onSuccess} sessionId={sessionId} />
         </motion.div>
       </div>
     </div>
