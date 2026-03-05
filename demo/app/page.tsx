@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Home, Paintbrush, Users } from "lucide-react";
 import Image from "next/image";
-import Footer from "@/components/ui/footer";
 import StatBar from "@/components/landing/StatBar";
 import { testimonial1 } from "@/lib/testimonials";
 import TestimonialSection from "@/components/landing/Testimonial";
@@ -244,9 +243,6 @@ export default function Page() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-foreground text-background">
         <FooterCTA/>
       </section>
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }

@@ -23,7 +23,7 @@ const NAV_LINKS = [
     hasDropdown: true,
     children: [
       {
-        label: "Isolation des combles",
+        label: "De quoi s'agit-il",
         href: "/services/combles",
         icon: <Home className="w-4 h-4" />,
         description: "Jusqu'à 30 % de pertes évitées",
