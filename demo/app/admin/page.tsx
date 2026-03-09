@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Eye, PenLine, Plus } from "lucide-react";
 import { CATEGORY_LABELS, type PostCategory } from "@/lib/supabase/posts";
+import { supabase } from "@/lib/supabase/supabase";
 
-async function getDashboardStats(supabase: any) {
+async function getDashboardStats() {
   const [
     { count: total },
     { count: published },
@@ -24,14 +23,7 @@ async function getDashboardStats(supabase: any) {
 }
 
 export default async function AdminDashboardPage() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-  );
-
-  const { total, published, draft, recent } = await getDashboardStats(supabase);
+  const { total, published, draft, recent } = await getDashboardStats();
 
   const stats = [
     { label: "Articles total", value: total ?? 0, icon: FileText },

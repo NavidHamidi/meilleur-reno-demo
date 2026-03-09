@@ -4,12 +4,16 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // On ne protège que /admin
-  if (!pathname.startsWith("/admin")) {
+  if (!pathname.startsWith("/admin") || pathname.startsWith("/admin/login")) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.next();
+  // ── DEBUG : affiche tous les cookies reçus ──────────────────────
+  const allCookies = request.cookies.getAll();
+  console.log("🍪 Cookies dans le middleware :", allCookies.map(c => c.name));
+  // ────────────────────────────────────────────────────────────────
+
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,28 +22,39 @@ export async function middleware(request: NextRequest) {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
         },
       },
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  // Non connecté → login
+  // ── DEBUG ────────────────────────────────────────────────────────
+  console.log("👤 User :", user?.email ?? "null");
+  console.log("❌ Erreur :", error?.message ?? "aucune");
+  // ────────────────────────────────────────────────────────────────
+
   if (!user) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/login";
+    return NextResponse.redirect(url);
   }
 
-  // Rôle insuffisant → accueil
   const role = user.user_metadata?.role as string | undefined;
   if (!role || !["admin", "editor"].includes(role)) {
-    return NextResponse.redirect(new URL("/", request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
   }
 
-  return response;
+  return supabaseResponse;
 }
 
 export const config = {

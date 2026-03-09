@@ -24,14 +24,14 @@ export default async function AdminLayout({
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/admin/login");
+  //if (!user) redirect("/admin/login");
 
-  const role = user.user_metadata?.role as string;
+  const role = user?.user_metadata?.role as string;
   const isAdmin = role === "admin";
 
   return (
     <div className="min-h-screen bg-muted/20 flex">
-      <AdminNav isAdmin={isAdmin} userEmail={user.email ?? ""} />
+      <AdminNav isAdmin={isAdmin} userEmail={user?.email ?? ""} />
       <main className="flex-1 ml-60 p-8 min-h-screen">
         {children}
       </main>

@@ -128,6 +128,7 @@ export default function PostEditor({ post }: { post?: Post }) {
 
   // Éditeur Tiptap
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder: "Rédigez votre article ici…" }),

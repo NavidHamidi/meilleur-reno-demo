@@ -1,16 +1,13 @@
-'use client'
-
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminLoginPage() {
-    //return <LoginForm onSuccess={onSuccess} />;
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,21 +19,17 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError(null);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    // La route API gère l'auth côté serveur et écrit les cookies sb-*
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (error || !data.user) {
-      setError("Email ou mot de passe incorrect.");
-      setLoading(false);
-      return;
-    }
+    const data = await res.json();
 
-    const role = data.user.user_metadata?.role;
-    if (!["admin", "editor"].includes(role)) {
-      await supabase.auth.signOut();
-      setError("Vous n'avez pas accès à l'interface d'administration.");
+    if (!res.ok) {
+      setError(data.error ?? "Erreur de connexion.");
       setLoading(false);
       return;
     }
@@ -48,7 +41,6 @@ export default function AdminLoginPage() {
   return (
     <main className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-6">
-
         <div className="text-center space-y-1">
           <p className="text-2xl font-bold font-serif text-foreground">
             Meilleure<span className="text-primary">Reno</span>
