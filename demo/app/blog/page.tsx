@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowRight, Clock } from "lucide-react";
 import Image from "next/image";
 import FooterCTA from "@/components/landing/FooterCTA";
+import { getAllPosts } from "@/lib/supabase/posts";
 
 /* ── DONNÉES ─────────────────────────────────────────────────────── */
 
@@ -15,7 +16,7 @@ const categories = [
   "DPE & Audit",
   "Rénovation globale",
 ];
-
+/*
 const featuredPost = {
   slug: "maprimerénov-2026-guide-complet",
   category: "Aides & Financement",
@@ -90,7 +91,7 @@ const posts = [
     readTime: "6 min",
   },
 ];
-
+*/
 /* ── COMPOSANTS ──────────────────────────────────────────────────── */
 
 function CategoryBadge({ label }: { label: string }) {
@@ -103,7 +104,19 @@ function CategoryBadge({ label }: { label: string }) {
 
 /* ── PAGE ────────────────────────────────────────────────────────── */
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getAllPosts();
+  const featuredPost = posts.length > 0 ? posts[0] : {
+    slug: "maprimerénov-2026-guide-complet",
+    category: "Aides & Financement",
+    title: "MaPrimeRénov' 2026 : le guide complet pour ne rien rater",
+    excerpt: "Le guide ultime pour maximiser les aides financières disponibles en 2026.",
+    cover_image_url: "/maprimerenov-2026-guide-complet.jpg",
+    author_name: "Jean Dupont",
+    published_at: "2026-01-15",
+    read_time_min: 10,
+  };
+  console.log(posts)
   return (
     <main className="min-h-screen bg-background">
 
@@ -160,7 +173,7 @@ export default function BlogPage() {
                 {/* Image */}
                 <div className="relative h-72 lg:h-auto overflow-hidden">
                   <Image
-                    src={featuredPost.image}
+                    src={featuredPost.cover_image_url ?? "/interieur.webp"}
                     alt={featuredPost.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -184,12 +197,12 @@ export default function BlogPage() {
                   </p>
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>{featuredPost.author}</span>
+                      <span>{featuredPost.author_name}</span>
                       <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-                      <span>{featuredPost.date}</span>
+                      <span>{featuredPost.published_at}</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {featuredPost.readTime}
+                        {featuredPost.read_time_min}
                       </span>
                     </div>
                     <ArrowRight className="w-5 h-5 text-primary transition-transform group-hover:translate-x-1" />
@@ -224,7 +237,7 @@ export default function BlogPage() {
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
                     <Image
-                      src={post.image}
+                      src={post.cover_image_url ?? "/studio-arrangement-work.jpg"}
                       alt={post.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -243,10 +256,10 @@ export default function BlogPage() {
                       {post.excerpt}
                     </p>
                     <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border">
-                      <span>{post.date}</span>
+                      <span>{post.published_at}</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {post.readTime}
+                        {post.read_time_min} min
                       </span>
                     </div>
                   </CardContent>
