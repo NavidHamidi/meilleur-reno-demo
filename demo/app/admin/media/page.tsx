@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/supabaseServer";
+import { createClient } from "@/lib/supabase/server";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import type { Media } from "@/lib/supabase/posts";
 

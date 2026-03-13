@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/supabaseServer";
+import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, ArrowLeft, Calendar } from "lucide-react";
@@ -20,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = await createServerClient();
 
   const { data: post } = await supabase
     .from("mr_posts_published")
@@ -47,7 +47,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = await createServerClient();
 
   const { data: post } = await supabase
     .from("mr_posts_published")

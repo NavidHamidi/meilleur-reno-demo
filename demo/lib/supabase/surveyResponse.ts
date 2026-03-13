@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type APIResponse } from "@/lib/types/api";
-import { type SurveyResponse } from "@/lib/types/db";
-import { supabase } from "./supabase";
+import { type SurveyResponse } from "@/lib/types/survey";
+import { supabase } from "./client";
 
 const TABLE_NAME = "mr_survey_responses";
 

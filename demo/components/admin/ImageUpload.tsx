@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { uploadMedia, type Media } from "@/lib/supabase/posts";
-import { supabase } from "@/lib/supabase/supabase"
+import { supabase } from "@/lib/supabase/client"
 import { ImagePlus, X, Loader2 } from "lucide-react";
 import Image from "next/image";
 

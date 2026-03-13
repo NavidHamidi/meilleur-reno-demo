@@ -1,5 +1,7 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+// app/admin/layout.tsx
+// Protection gérée par le middleware — le layout récupère juste la session
+
+import { createServerClient } from "@/lib/supabase/server";
 import AdminNav from "@/components/admin/AdminNav";
 
 export const metadata = { title: "Admin — MeilleureReno" };
@@ -9,21 +11,8 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  );
-
+  const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
-  //if (!user) redirect("/admin/login");
 
   const role = user?.user_metadata?.role as string;
   const isAdmin = role === "admin";

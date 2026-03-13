@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Eye, PenLine, Plus } from "lucide-react";
 import { CATEGORY_LABELS, type PostCategory } from "@/lib/supabase/posts";
-import { supabase } from "@/lib/supabase/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 async function getDashboardStats() {
   const [

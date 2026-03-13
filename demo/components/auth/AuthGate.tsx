@@ -1,16 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, CheckCircle2 } from "lucide-react";
+import { LoginForm } from "@/components/auth/LoginForm";
 
-import LoginForm from "./LoginForm";
+export default function AuthGate() {
+  useEffect(() => {
+    // Sauvegarder le sessionId dans sessionStorage pour le récupérer après auth
+    const savedSession = localStorage.getItem("questionnaire_session");
+    
+    if (savedSession) {
+      const sessionData = JSON.parse(savedSession);
+      sessionStorage.setItem("pending_session_id", sessionData.sessionId);
+      console.log("💾 Session ID saved for post-auth linking:", sessionData.sessionId);
+    } else {
+      console.warn("⚠️ No questionnaire session found");
+    }
+  }, []);
 
-interface AuthGateProps {
-  onSuccess: (userId: string) => void;
-  sessionId?: string;
-}
-
-export default function AuthGate({ onSuccess, sessionId }: AuthGateProps) {
   const benefits = [
     "Accédez à vos résultats détaillés",
     "Recommandations personnalisées",
@@ -73,7 +81,13 @@ export default function AuthGate({ onSuccess, sessionId }: AuthGateProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <LoginForm onSuccess={onSuccess} sessionId={sessionId} />
+          <LoginForm
+            redirectTo="/survey/result"
+            allowedRoles={["client", "prestataire"]}
+            showResetLink={true}
+            showSignUpLink={true}
+            signUpUrl="/auth/signup"
+          />
         </motion.div>
       </div>
     </div>
