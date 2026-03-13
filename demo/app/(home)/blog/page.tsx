@@ -116,7 +116,6 @@ export default async function BlogPage() {
     published_at: "2026-01-15",
     read_time_min: 10,
   };
-  console.log(posts)
   return (
     <main className="min-h-screen bg-background">
 

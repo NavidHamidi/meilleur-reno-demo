@@ -153,7 +153,7 @@ export default async function BlogPostPage({
             Un expert Meilleure Réno vous répond sous 24h.
           </p>
           <Link
-            href="/contact"
+            href="/survey"
             className="inline-block bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg"
           >
             Je démarre mon projet →
